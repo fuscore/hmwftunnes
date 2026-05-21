@@ -1,428 +1,268 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Katalog Kewirausahaan HMW FT UNNES</title>
-  <script src="https://cdn.tailwindcss.com"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
-  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
-  <style>
-    :root {
-      --orange:   #FF6B00;
-      --yellow:   #FFC200;
-      --bg:       #FFFBF4;
-      --surface:  #FFFFFF;
-      --border:   #FFE0B2;
-      --text:     #1A0A00;
-      --muted:    #8C6A3F;
-    }
-    * { box-sizing: border-box; }
-    body {
-      font-family: 'Plus Jakarta Sans', sans-serif;
-      background-color: var(--bg);
-      color: var(--text);
-      min-height: 100vh;
-    }
-    .font-display { font-family: 'Bebas Neue', sans-serif; }
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Katalog Kewirausahaan | HMW FT UNNES</title>
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
-    /* HEADER */
-    .hero-bg {
-      background: linear-gradient(130deg, #FF6B00 0%, #FFC200 55%, #FF8C38 100%);
-      position: relative;
-      overflow: hidden;
-    }
-    .hero-dots {
-      position: absolute; inset: 0;
-      background-image: radial-gradient(circle, rgba(255,255,255,0.2) 1px, transparent 1px);
-      background-size: 26px 26px;
-      pointer-events: none;
-    }
-    .hero-circle1 {
-      position: absolute; top: -90px; right: -70px;
-      width: 300px; height: 300px;
-      background: rgba(255,255,255,0.13); border-radius: 50%;
-    }
-    .hero-circle2 {
-      position: absolute; bottom: -70px; left: 35%;
-      width: 200px; height: 200px;
-      background: rgba(255,255,255,0.09); border-radius: 50%;
-    }
-    .accent-line {
-      height: 4px;
-      background: linear-gradient(90deg, #1A0A00, #FF6B00, #FFC200, #FF6B00, #1A0A00);
-    }
-
-    /* STAT CARD */
-    .stat-card {
-      background: rgba(255,255,255,0.25);
-      backdrop-filter: blur(8px);
-      border: 1px solid rgba(255,255,255,0.45);
-      border-radius: 14px;
-      padding: 10px 18px;
-      text-align: center;
-      min-width: 76px;
-    }
-
-    /* FILTER BAR */
-    .filter-bar {
-      background: rgba(255,251,244,0.97);
-      backdrop-filter: blur(16px);
-      border-bottom: 2px solid var(--border);
-    }
-    .filter-btn {
-      padding: 6px 16px;
-      border-radius: 999px;
-      border: 1.5px solid var(--border);
-      background: white;
-      color: var(--muted);
-      font-family: 'Plus Jakarta Sans', sans-serif;
-      font-size: 13px; font-weight: 600;
-      cursor: pointer;
-      transition: all 0.18s ease;
-      white-space: nowrap;
-    }
-    .filter-btn:hover { border-color: var(--orange); color: var(--orange); background: #FFF4E8; }
-    .filter-btn.active {
-      background: linear-gradient(135deg, var(--orange), var(--yellow));
-      border-color: transparent; color: white;
-      box-shadow: 0 3px 10px rgba(255,107,0,0.35);
-    }
-    .filter-scroll {
-      display: flex; gap: 7px;
-      overflow-x: auto; padding-bottom: 2px;
-      scrollbar-width: none;
-    }
-    .filter-scroll::-webkit-scrollbar { display: none; }
-
-    /* SEARCH */
-    #searchInput {
-      background: white;
-      border: 1.5px solid var(--border);
-      color: var(--text);
-      border-radius: 12px;
-      padding: 10px 14px 10px 38px;
-      font-size: 14px; width: 100%;
-      outline: none;
-      font-family: 'Plus Jakarta Sans', sans-serif;
-      transition: border-color 0.18s, box-shadow 0.18s;
-    }
-    #searchInput:focus { border-color: var(--orange); box-shadow: 0 0 0 3px rgba(255,107,0,0.12); }
-    #searchInput::placeholder { color: #C0A07A; }
-
-    /* CARD */
-    .product-card {
-      background: var(--surface);
-      border: 1.5px solid var(--border);
-      border-radius: 18px; overflow: hidden;
-      display: flex; flex-direction: column;
-      transition: transform 0.28s ease, box-shadow 0.28s ease, border-color 0.28s ease;
-    }
-    .product-card:hover {
-      transform: translateY(-7px);
-      border-color: var(--orange);
-      box-shadow: 0 20px 44px rgba(255,107,0,0.14);
-    }
-    .product-img { width: 100%; height: 196px; object-fit: cover; display: block; }
-    .img-placeholder {
-      width: 100%; height: 196px;
-      background: linear-gradient(135deg, #FFF4E8, #FFE8C8);
-      display: flex; flex-direction: column;
-      align-items: center; justify-content: center;
-      color: #FFB266;
-    }
-
-    /* BADGES */
-    .category-badge {
-      display: inline-block; padding: 2px 10px; border-radius: 999px;
-      font-size: 11px; font-weight: 700;
-      letter-spacing: 0.4px; text-transform: uppercase;
-    }
-    .badge-ft    { background: #FFF0E0; color: #FF6B00; border: 1px solid #FFD0A0; }
-    .badge-umum  { background: #FFF8DC; color: #B8860B; border: 1px solid #FFE066; }
-    .badge-jenis { background: #F5F0FF; color: #7B5EA7; border: 1px solid #D6C9FF; }
-
-    .price-tag { font-family: 'Bebas Neue', sans-serif; font-size: 22px; color: var(--orange); }
-
-    /* WA BUTTON */
-    .wa-btn {
-      display: flex; align-items: center; justify-content: center; gap: 7px;
-      width: 100%; padding: 10px;
-      background: linear-gradient(135deg, #25D366, #1aad55);
-      color: white; border-radius: 11px;
-      font-weight: 700; font-size: 13px;
-      text-decoration: none;
-      transition: filter 0.18s, transform 0.1s;
-    }
-    .wa-btn:hover { filter: brightness(1.08); transform: scale(0.99); }
-
-    /* SPINNER */
-    .spinner {
-      width: 48px; height: 48px;
-      border: 4px solid #FFE0B2;
-      border-top-color: var(--orange);
-      border-radius: 50%;
-      animation: spin 0.8s linear infinite;
-    }
-    @keyframes spin { to { transform: rotate(360deg); } }
-
-    .section-label {
-      font-size: 11px; font-weight: 700;
-      text-transform: uppercase; letter-spacing: 0.8px;
-      color: var(--muted); white-space: nowrap; flex-shrink: 0;
-    }
-  </style>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        hmw: {
+                            black: '#1a1a1a',
+                            yellow: '#fcc107',
+                            orange: '#f97316',
+                            gray: '#f3f4f6'
+                        }
+                    }
+                }
+            }
+        }
+    </script>
 </head>
-<body>
+<body class="bg-gray-100 font-sans text-gray-800 antialiased min-h-screen flex flex-col">
 
-  <div class="accent-line"></div>
+    <header class="bg-hmw-black text-white shadow-lg sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex justify-between items-center">
+            <div class="flex items-center gap-3">
+                <i class="fa-solid fa-lightbulb text-hmw-yellow text-2xl"></i>
+                <div>
+                    <h1 class="text-xl font-bold leading-tight">Katalog Kewirausahaan</h1>
+                    <p class="text-xs text-hmw-orange font-semibold tracking-wider">HMW FT UNNES</p>
+                </div>
+            </div>
+            <a href="#" class="text-sm bg-hmw-yellow text-hmw-black font-bold px-4 py-2 rounded-lg hover:bg-yellow-500 transition-colors hidden sm:block">
+                Dukung Mahasiswa Wirausaha!
+            </a>
+        </div>
+    </header>
 
-  <!-- HEADER -->
-  <header class="hero-bg">
-    <div class="hero-dots"></div>
-    <div class="hero-circle1"></div>
-    <div class="hero-circle2"></div>
-    <div class="max-w-7xl mx-auto px-4 py-8 relative z-10">
-      <div class="flex flex-col md:flex-row md:items-center gap-6">
+    <main class="flex-grow max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 w-full">
+        
+        <div class="bg-white p-4 rounded-xl shadow-sm border border-gray-200 mb-8">
+            <h2 class="text-lg font-bold mb-4 text-gray-700"><i class="fa-solid fa-filter text-hmw-orange mr-2"></i>Filter Produk</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                
+                <div>
+                    <label for="filterKategori" class="block text-sm font-medium text-gray-600 mb-1">Kategori Kepemilikan</label>
+                    <select id="filterKategori" class="w-full border-gray-300 rounded-lg p-2.5 bg-gray-50 border focus:ring-2 focus:ring-hmw-yellow focus:border-hmw-yellow outline-none transition-all">
+                        <option value="Semua">Semua Kategori</option>
+                        <option value="FT">Fakultas Teknik (FT)</option>
+                        <option value="Umum">Umum</option>
+                    </select>
+                </div>
 
-        <!-- Logo + Title -->
-        <div class="flex items-center gap-4">
-          <img
-            src="logo_hmw.jpeg"
-            alt="Logo HMW FT UNNES"
-            class="w-20 h-20 rounded-2xl object-contain bg-white p-1.5 shadow-xl flex-shrink-0"
-            onerror="this.style.display='none';document.getElementById('logo-fallback').style.display='flex';"
-          />
-          <div id="logo-fallback"
-            class="hidden w-20 h-20 rounded-2xl bg-white shadow-xl items-center justify-center flex-shrink-0"
-            style="display:none">
-            <span class="font-display text-3xl" style="color:var(--orange)">HMW</span>
-          </div>
-          <div>
-            <span class="inline-block bg-black text-yellow-300 font-display text-xs px-2.5 py-0.5 rounded tracking-widest mb-1">FT · UNNES</span>
-            <h1 class="font-display text-4xl md:text-5xl text-white leading-none tracking-wide drop-shadow-md">
-              KATALOG<br><span style="color:#FFF3B0">KEWIRAUSAHAAN</span>
-            </h1>
-            <p class="text-orange-100 text-sm mt-1.5 font-semibold">Himpunan Mahasiswa Wirausaha</p>
-          </div>
+                <div>
+                    <label for="filterJenis" class="block text-sm font-medium text-gray-600 mb-1">Jenis Produk / Jasa</label>
+                    <select id="filterJenis" class="w-full border-gray-300 rounded-lg p-2.5 bg-gray-50 border focus:ring-2 focus:ring-hmw-yellow focus:border-hmw-yellow outline-none transition-all">
+                        <option value="Semua">Semua Jenis</option>
+                        </select>
+                </div>
+                
+            </div>
         </div>
 
-        <!-- Stats -->
-        <div class="md:ml-auto flex gap-3 flex-wrap">
-          <div class="stat-card">
-            <div id="totalProducts" class="font-display text-3xl text-white leading-none">—</div>
-            <div class="text-xs text-orange-100 font-semibold mt-1">Produk</div>
-          </div>
-          <div class="stat-card">
-            <div id="totalSellers" class="font-display text-3xl leading-none" style="color:#FFF3B0">—</div>
-            <div class="text-xs text-orange-100 font-semibold mt-1">Penjual</div>
-          </div>
-          <div class="stat-card">
-            <div id="totalCategories" class="font-display text-3xl text-white leading-none">—</div>
-            <div class="text-xs text-orange-100 font-semibold mt-1">Jenis</div>
-          </div>
+        <div id="loadingIndicator" class="flex flex-col items-center justify-center py-20">
+            <div class="animate-spin rounded-full h-14 w-14 border-4 border-gray-200 border-t-hmw-yellow mb-4"></div>
+            <p class="text-gray-500 font-medium animate-pulse">Mengambil data produk...</p>
         </div>
 
-      </div>
-    </div>
-  </header>
-
-  <!-- FILTER BAR -->
-  <div class="filter-bar sticky top-0 z-40 px-4 py-3">
-    <div class="max-w-7xl mx-auto space-y-2.5">
-      <div class="relative">
-        <svg class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4" style="color:var(--muted)" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
-        </svg>
-        <input id="searchInput" type="text" placeholder="Cari produk atau penjual…" />
-      </div>
-      <div class="flex items-center gap-3">
-        <span class="section-label">Kategori</span>
-        <div class="filter-scroll" id="categoryFilters"></div>
-      </div>
-      <div class="flex items-center gap-3">
-        <span class="section-label">Jenis</span>
-        <div class="filter-scroll" id="jenisFilters"></div>
-      </div>
-    </div>
-  </div>
-
-  <!-- MAIN -->
-  <main class="max-w-7xl mx-auto px-4 py-8">
-
-    <div id="loadingState" class="flex flex-col items-center justify-center py-28 gap-4">
-      <div class="spinner"></div>
-      <p class="text-sm font-semibold" style="color:var(--muted)">Memuat data katalog…</p>
-    </div>
-
-    <div id="errorState" class="hidden text-center py-28">
-      <div class="text-6xl mb-4">⚠️</div>
-      <p class="font-semibold" style="color:var(--muted)">Gagal memuat data. Silakan coba lagi.</p>
-      <button onclick="fetchData()" class="mt-5 px-7 py-2.5 rounded-xl font-bold text-sm text-white" style="background:var(--orange)">Coba Lagi</button>
-    </div>
-
-    <div id="emptyState" class="hidden text-center py-28">
-      <div class="text-6xl mb-4">🔍</div>
-      <p class="font-semibold" style="color:var(--muted)">Tidak ada produk yang sesuai filter.</p>
-    </div>
-
-    <div id="resultInfo" class="hidden mb-5">
-      <span id="productCount" class="text-sm font-semibold" style="color:var(--muted)"></span>
-    </div>
-
-    <div id="productGrid" class="hidden grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5"></div>
-  </main>
-
-  <!-- FOOTER -->
-  <footer class="mt-16 py-6 text-center text-xs font-semibold" style="color:var(--muted);border-top:2px dashed var(--border)">
-    © 2024 HMW FT UNNES &nbsp;·&nbsp; Himpunan Mahasiswa Wirausaha &nbsp;·&nbsp; Fakultas Teknik Universitas Negeri Semarang
-  </footer>
-
-  <script>
-    const CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vR0IN0C320oD-k1zw9YtbOc-Ofd8by4NoIu1h40CFgWzybAN8n7gbonNQcSWTxmyxAOLcwXPnNSnhQv/pub?output=csv';
-    let allProducts = [], activeKategori = 'Semua', activeJenis = 'Semua', searchQuery = '';
-
-    function show(id){ document.getElementById(id).classList.remove('hidden'); }
-    function hide(id){ document.getElementById(id).classList.add('hidden'); }
-
-    function getField(obj, ...keys) {
-      for (const k of keys) {
-        if (obj[k] !== undefined && obj[k] !== '') return obj[k];
-        const match = Object.keys(obj).find(ok => ok.trim().toLowerCase() === k.toLowerCase());
-        if (match && obj[match] !== '') return obj[match];
-      }
-      return '';
-    }
-
-    function fetchData() {
-      show('loadingState');
-      hide('errorState'); hide('productGrid'); hide('emptyState'); hide('resultInfo');
-      Papa.parse(CSV_URL, {
-        download: true, header: true, skipEmptyLines: true,
-        complete(results) {
-          hide('loadingState');
-          allProducts = results.data;
-          initFilters(); updateStats(); renderProducts();
-        },
-        error() { hide('loadingState'); show('errorState'); }
-      });
-    }
-
-    function updateStats() {
-      document.getElementById('totalProducts').textContent = allProducts.length;
-      const sellers = new Set(allProducts.map(p => getField(p,'Nama_Penjual','Nama Penjual','Penjual')).filter(Boolean));
-      document.getElementById('totalSellers').textContent = sellers.size;
-      const jenis = new Set(allProducts.map(p => getField(p,'Jenis_Produk','Jenis Produk','Jenis')).filter(Boolean));
-      document.getElementById('totalCategories').textContent = jenis.size;
-    }
-
-    function buildBtns(containerId, items, getActive, setActive) {
-      const el = document.getElementById(containerId);
-      el.innerHTML = '';
-      items.forEach(item => {
-        const btn = document.createElement('button');
-        btn.className = 'filter-btn' + (item === getActive() ? ' active' : '');
-        btn.textContent = item;
-        btn.onclick = () => { setActive(item); buildBtns(containerId, items, getActive, setActive); renderProducts(); };
-        el.appendChild(btn);
-      });
-    }
-
-    function initFilters() {
-      const katItems = ['Semua', ...new Set(allProducts.map(p => getField(p,'Kategori','Label_Kategori','Label Kategori')).filter(Boolean))];
-      buildBtns('categoryFilters', katItems, () => activeKategori, v => activeKategori = v);
-
-      const jenisItems = ['Semua', ...new Set(allProducts.map(p => getField(p,'Jenis_Produk','Jenis Produk','Jenis')).filter(Boolean))];
-      buildBtns('jenisFilters', jenisItems, () => activeJenis, v => activeJenis = v);
-    }
-
-    function renderProducts() {
-      const q = searchQuery.toLowerCase();
-      const filtered = allProducts.filter(p => {
-        const kat    = getField(p,'Kategori','Label_Kategori','Label Kategori');
-        const jenis  = getField(p,'Jenis_Produk','Jenis Produk','Jenis');
-        const nama   = getField(p,'Nama_Produk','Nama Produk','Produk');
-        const penjual= getField(p,'Nama_Penjual','Nama Penjual','Penjual');
-        return (activeKategori==='Semua'||kat===activeKategori)
-            && (activeJenis==='Semua'||jenis===activeJenis)
-            && (!q||nama.toLowerCase().includes(q)||penjual.toLowerCase().includes(q)||jenis.toLowerCase().includes(q));
-      });
-
-      const grid = document.getElementById('productGrid');
-      if (filtered.length === 0) {
-        hide('productGrid'); show('emptyState'); hide('resultInfo'); return;
-      }
-      hide('emptyState'); show('productGrid'); show('resultInfo');
-      document.getElementById('productCount').textContent = `Menampilkan ${filtered.length} produk`;
-      grid.innerHTML = filtered.map(createCard).join('');
-    }
-
-    const placeholder = `<div class="img-placeholder">
-      <svg class="w-14 h-14" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1"
-          d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
-      </svg>
-      <span class="text-xs mt-2 font-semibold">Foto tidak tersedia</span>
-    </div>`;
-
-    function createCard(p) {
-      const nama     = getField(p,'Nama_Produk','Nama Produk','Produk')                  || 'Produk';
-      const harga    = getField(p,'Harga','Harga_Produk','Harga Produk')                   || '-';
-      const penjual  = getField(p,'Nama_Penjual','Nama Penjual','Penjual')                 || '-';
-      const kategori = getField(p,'Kategori','Label_Kategori','Label Kategori')            || 'Umum';
-      const jenis    = getField(p,'Jenis_Produk','Jenis Produk','Jenis')                   || '';
-      const deskripsi= getField(p,'Deskripsi','Deskripsi_Produk','Deskripsi Produk')       || '';
-      const foto     = getField(p,'Foto','Foto_Produk','Foto Produk','Gambar','Image','Link_Foto','Link Foto') || '';
-      const wa       = getField(p,'No_WA','Nomor_WA','Nomor WA','WA','No WA','WhatsApp')   || '';
-
-      const badgeClass = kategori.toLowerCase() === 'ft' ? 'badge-ft' : 'badge-umum';
-      const num = parseInt(String(harga).replace(/[^0-9]/g,''));
-      const hargaFormatted = (!isNaN(num)&&num>0) ? 'Rp '+num.toLocaleString('id-ID') : harga;
-
-      const waClean = wa.replace(/[^0-9]/g,'').replace(/^0/,'62');
-      const waMsg   = encodeURIComponent(`Halo ${penjual}, saya tertarik dengan produk ${nama} di Website HMW`);
-      const waLink  = waClean ? `https://wa.me/${waClean}?text=${waMsg}` : '#';
-
-      const safe = placeholder.replace(/`/g,'').replace(/\n\s*/g,' ');
-      const imgEl = foto
-        ? `<img src="${foto}" alt="${nama}" class="product-img" onerror="this.outerHTML=\`${safe}\`">`
-        : placeholder;
-
-      return `
-      <div class="product-card">
-        ${imgEl}
-        <div class="p-4 flex flex-col gap-3 flex-1">
-          <div class="flex flex-wrap gap-1.5">
-            <span class="category-badge ${badgeClass}">${kategori}</span>
-            ${jenis?`<span class="category-badge badge-jenis">${jenis}</span>`:''}
-          </div>
-          <div class="flex-1 space-y-1">
-            <h3 class="font-bold text-base leading-snug line-clamp-2" style="color:var(--text)">${nama}</h3>
-            <p class="price-tag">${hargaFormatted}</p>
-            <p class="flex items-center gap-1 text-xs font-semibold" style="color:var(--muted)">
-              <svg class="w-3.5 h-3.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                  d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
-              </svg>${penjual}
-            </p>
-            ${deskripsi?`<p class="text-xs leading-relaxed line-clamp-3" style="color:#A07850">${deskripsi}</p>`:''}
-          </div>
-          <a href="${waLink}" target="_blank" rel="noopener" class="wa-btn mt-auto">
-            <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
-              <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/>
-              <path d="M12 0C5.373 0 0 5.373 0 12c0 2.098.537 4.071 1.476 5.797L0 24l6.372-1.454A11.943 11.943 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 22c-1.823 0-3.534-.48-5.014-1.318l-.36-.213-3.735.852.892-3.638-.235-.374A9.941 9.941 0 012 12C2 6.477 6.477 2 12 2s10 4.477 10 10-4.477 10-10 10z"/>
-            </svg>
-            Hubungi via WhatsApp
-          </a>
+        <div id="errorMessage" class="hidden bg-red-100 border-l-4 border-red-500 text-red-700 p-4 rounded mb-8" role="alert">
+            <p class="font-bold">Gagal memuat data!</p>
+            <p>Pastikan link CSV sudah benar dan Google Sheets diset ke "Publik".</p>
         </div>
-      </div>`;
-    }
 
-    document.getElementById('searchInput').addEventListener('input', e => {
-      searchQuery = e.target.value; renderProducts();
-    });
+        <div id="emptyState" class="hidden flex flex-col items-center justify-center py-16 text-center">
+            <i class="fa-solid fa-box-open text-6xl text-gray-300 mb-4"></i>
+            <h3 class="text-xl font-bold text-gray-600">Produk Tidak Ditemukan</h3>
+            <p class="text-gray-500">Coba ubah kombinasi filter Anda.</p>
+        </div>
 
-    fetchData();
-  </script>
+        <div id="productGrid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 hidden">
+            </div>
+
+    </main>
+
+    <footer class="bg-hmw-black text-gray-400 py-6 text-center text-sm">
+        <p>&copy; 2026 Himpunan Mahasiswa Wirausaha FT UNNES. All rights reserved.</p>
+    </footer>
+
+    <script>
+        // URL CSV dari Google Sheets (sesuai permintaan)
+        const CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vR0IN0C320oD-k1zw9YtbOc-Ofd8by4NoIu1h40CFgWzybAN8n7gbonNQcSWTxmyxAOLcwXPnNSnhQv/pub?output=csv';
+        
+        let allProducts = [];
+
+        // Elemen DOM
+        const filterKategori = document.getElementById('filterKategori');
+        const filterJenis = document.getElementById('filterJenis');
+        const productGrid = document.getElementById('productGrid');
+        const loadingIndicator = document.getElementById('loadingIndicator');
+        const emptyState = document.getElementById('emptyState');
+        const errorMessage = document.getElementById('errorMessage');
+
+        // Event Listener untuk filter otomatis saat dropdown berubah
+        filterKategori.addEventListener('change', applyFilters);
+        filterJenis.addEventListener('change', applyFilters);
+
+        // Fungsi format Rupiah
+        function formatRupiah(angka) {
+            let number_string = angka.toString().replace(/[^,\d]/g, ''),
+                split = number_string.split(','),
+                sisa = split[0].length % 3,
+                rupiah = split[0].substr(0, sisa),
+                ribuan = split[0].substr(sisa).match(/\d{3}/gi);
+
+            if (ribuan) {
+                let separator = sisa ? '.' : '';
+                rupiah += separator + ribuan.join('.');
+            }
+            return rupiah ? 'Rp ' + rupiah : 'Rp 0';
+        }
+
+        // Fungsi membersihkan dan memvalidasi Nomor WA (Ganti 0 jadi 62)
+        function formatWA(no_wa) {
+            let wa = no_wa.toString().replace(/\D/g, ''); // Hapus karakter non-digit
+            if (wa.startsWith('0')) {
+                wa = '62' + wa.substring(1);
+            }
+            return wa;
+        }
+
+        // Ambil Data CSV menggunakan PapaParse
+        Papa.parse(CSV_URL, {
+            download: true,
+            header: true,
+            skipEmptyLines: true,
+            complete: function(results) {
+                // Sembunyikan loading
+                loadingIndicator.classList.add('hidden');
+                productGrid.classList.remove('hidden');
+
+                // Mapping dan normalisasi data (antisipasi spasi/underscore pada nama kolom CSV)
+                allProducts = results.data.map(row => {
+                    return {
+                        foto: row['Foto_Produk'] || row['Foto Produk'] || row['Foto'] || 'https://via.placeholder.com/400x300/f3f4f6/a1a1aa?text=Tidak+Ada+Foto',
+                        kategori: row['Kategori'] || 'Umum',
+                        nama_produk: row['Nama_Produk'] || row['Nama Produk'] || 'Produk Tanpa Nama',
+                        harga: row['Harga'] || '0',
+                        nama_penjual: row['Nama_Penjual'] || row['Nama Penjual'] || 'Penjual',
+                        deskripsi: row['Deskripsi'] || 'Tidak ada deskripsi.',
+                        jenis_produk: row['Jenis_Produk'] || row['Jenis Produk'] || 'Lainnya',
+                        nomor_wa: row['Nomor_WA'] || row['Nomor WA'] || row['WA'] || ''
+                    };
+                });
+
+                populateJenisFilter();
+                applyFilters(); // Render semua produk saat pertama dimuat
+            },
+            error: function(err) {
+                loadingIndicator.classList.add('hidden');
+                errorMessage.classList.remove('hidden');
+                console.error("Gagal parse CSV:", err);
+            }
+        });
+
+        // Generate opsi dinamis untuk Filter Jenis Produk
+        function populateJenisFilter() {
+            // Ambil unique values dari jenis_produk
+            const uniqueJenis = [...new Set(allProducts.map(item => item.jenis_produk.trim()))].sort();
+            
+            uniqueJenis.forEach(jenis => {
+                if (jenis) {
+                    const option = document.createElement('option');
+                    option.value = jenis;
+                    option.textContent = jenis;
+                    filterJenis.appendChild(option);
+                }
+            });
+        }
+
+        // Logika Filter Ganda
+        function applyFilters() {
+            const valKategori = filterKategori.value;
+            const valJenis = filterJenis.value;
+
+            // Filter data secara kombinasi
+            const filteredProducts = allProducts.filter(item => {
+                const matchKategori = (valKategori === 'Semua') || 
+                                      (item.kategori.toLowerCase().includes(valKategori.toLowerCase()));
+                
+                const matchJenis = (valJenis === 'Semua') || 
+                                   (item.jenis_produk === valJenis);
+
+                return matchKategori && matchJenis;
+            });
+
+            renderProducts(filteredProducts);
+        }
+
+        // Render Cards HTML
+        function renderProducts(products) {
+            productGrid.innerHTML = ''; // Kosongkan grid
+
+            if (products.length === 0) {
+                productGrid.classList.add('hidden');
+                emptyState.classList.remove('hidden');
+                return;
+            }
+
+            productGrid.classList.remove('hidden');
+            emptyState.classList.add('hidden');
+
+            products.forEach(p => {
+                // Siapkan Pesan WA otomatis
+                const waNumber = formatWA(p.nomor_wa);
+                const pesan = `Halo ${p.nama_penjual}, saya tertarik dengan produk *${p.nama_produk}* di Website HMW FT UNNES. Apakah masih tersedia?`;
+                const waLink = waNumber ? `https://wa.me/${waNumber}?text=${encodeURIComponent(pesan)}` : '#';
+
+                // Tentukan warna label kategori
+                const isFT = p.kategori.toLowerCase().includes('ft');
+                const badgeColor = isFT ? 'bg-hmw-black text-hmw-yellow' : 'bg-gray-200 text-gray-700';
+
+                // Buat Card Element
+                const card = `
+                    <div class="bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-xl transition-shadow duration-300 border border-gray-100 flex flex-col h-full group">
+                        
+                        <div class="relative h-48 overflow-hidden bg-gray-100">
+                            <img src="${p.foto}" alt="${p.nama_produk}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" onerror="this.src='https://via.placeholder.com/400x300/f3f4f6/a1a1aa?text=Gambar+Error'">
+                            <span class="absolute top-3 left-3 ${badgeColor} text-xs font-bold px-3 py-1 rounded-full shadow">
+                                ${p.kategori}
+                            </span>
+                        </div>
+
+                        <div class="p-5 flex flex-col flex-grow">
+                            <div class="flex justify-between items-start mb-2">
+                                <h3 class="text-lg font-bold text-gray-800 line-clamp-1 flex-grow" title="${p.nama_produk}">${p.nama_produk}</h3>
+                            </div>
+                            
+                            <p class="text-hmw-orange font-extrabold text-xl mb-3">${formatRupiah(p.harga)}</p>
+                            
+                            <div class="flex items-center text-xs text-gray-500 mb-3 space-x-3">
+                                <span class="flex items-center"><i class="fa-solid fa-store mr-1 text-gray-400"></i> ${p.nama_penjual}</span>
+                                <span class="flex items-center border-l border-gray-300 pl-3"><i class="fa-solid fa-tag mr-1 text-gray-400"></i> ${p.jenis_produk}</span>
+                            </div>
+
+                            <p class="text-sm text-gray-600 line-clamp-2 mb-4 flex-grow">${p.deskripsi}</p>
+                            
+                            <a href="${waLink}" target="_blank" class="mt-auto w-full bg-green-500 hover:bg-green-600 text-white font-semibold py-2.5 rounded-xl text-center transition-colors flex items-center justify-center gap-2">
+                                <i class="fa-brands fa-whatsapp text-lg"></i> Hubungi Penjual
+                            </a>
+                        </div>
+                    </div>
+                `;
+                
+                productGrid.insertAdjacentHTML('beforeend', card);
+            });
+        }
+    </script>
 </body>
 </html>
